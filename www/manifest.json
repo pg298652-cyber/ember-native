@@ -1,0 +1,15 @@
+{
+  "name": "Ni8 — Health & Fitness",
+  "short_name": "Ni8",
+  "description": "Plan your timetable, build habits, track steps and streaks, and get real reminders.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0e1116",
+  "theme_color": "#0e1116",
+  "icons": [
+    { "src": "icon.png", "sizes": "1024x1024", "type": "image/png", "purpose": "any" },
+    { "src": "icon.png", "sizes": "1024x1024", "type": "image/png", "purpose": "maskable" }
+  ]
+}
