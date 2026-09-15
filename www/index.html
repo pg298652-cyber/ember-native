@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Ni8 — Health & Fitness</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0a0c">
+<style>
+  :root{
+    --bg:#0e1116;
+    --bg-elev:#161b23;
+    --card:#1a1f29;
+    --card-2:#222836;
+    --border:#2c3140;
+    --border-soft:rgba(255,255,255,0.06);
+    --text:#f6f5f1;
+    --text-dim:#9d9ca5;
+    --text-faint:#5c5b63;
+    --ember:#ff8a4c;
+    --ember-2:#ffb27a;
+    --ember-dim:#4a2a16;
+    --teal:#c6f94b;
+    --teal-2:#e0ff9c;
+    --teal-dim:#2c3a12;
+    --purple:#7c5cff;
+    --purple-2:#a894ff;
+    --purple-dim:#241c4a;
+    --blue:#4ec5ff;
+    --blue-2:#9adfff;
+    --blue-dim:#123044;
+    --danger:#ff5470;
+    --radius-lg:22px;
+    --radius-md:16px;
+    --radius-sm:10px;
+    --shadow-card:0 10px 30px -14px rgba(0,0,0,0.65);
+    --shadow-glow:0 0 0 1px rgba(198,249,75,0.12), 0 10px 30px -12px rgba(198,249,75,0.25);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:#000;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--text);
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    min-height:100%;
+  }
+  .phone{
+    width:100%;
+    max-width:430px;
+    min-height:100vh;
+    background:
+      radial-gradient(140% 55% at 15% -8%, rgba(255,106,61,0.10) 0%, rgba(0,0,0,0) 55%),
+      radial-gradient(120% 50% at 100% 0%, rgba(51,214,191,0.06) 0%, rgba(0,0,0,0) 50%),
+      var(--bg);
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  .brand-strip{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 18px 4px 18px;
+  }
+  .brand-mark{display:flex; align-items:center; gap:8px;}
+  .brand-mark .flame{font-size:18px; filter:drop-shadow(0 0 6px rgba(255,106,61,0.5));}
+  .brand-mark span{font-size:14px; font-weight:800; letter-spacing:0.02em;}
+  .gear-btn{
+    width:32px; height:32px; border-radius:50%; background:var(--card-2); border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-dim); font-size:15px;
+  }
+  .screen{
+    flex:1;
+    padding:12px 18px 100px 18px;
+    display:none;
+    animation:fadeIn .28s ease;
+  }
+  .screen.active{display:block;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+  /* ---------- Top header ---------- */
+  .topbar{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:22px;}
+  .topbar .eyebrow{color:var(--text-dim); font-size:13px; margin:0 0 2px 0;}
+  .topbar h1{
+    font-size:27px; font-weight:800; margin:0; letter-spacing:-0.02em;
+    background:linear-gradient(135deg, var(--text) 40%, #cfcdd6 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .streak-pill{
+    display:flex; align-items:center; gap:6px;
+    background:linear-gradient(135deg, var(--ember-dim), #2a1710);
+    border:1px solid #472417;
+    padding:8px 13px; border-radius:100px;
+    font-weight:700; font-size:15px; color:var(--ember-2);
+    white-space:nowrap;
+    box-shadow:0 4px 16px -6px rgba(255,106,61,0.5);
+  }
+
+  /* ---------- Cards ---------- */
+  .card{
+    background:linear-gradient(180deg, var(--card), #16161a);
+    border:1px solid var(--border-soft);
+    box-shadow:var(--shadow-card);
+    border-radius:var(--radius-lg);
+    padding:18px;
+    margin-bottom:14px;
+  }
+  .card-title{font-size:15px; font-weight:700; margin:0 0 12px 0;}
+  .card-sub{color:var(--text-dim); font-size:13px; margin:2px 0 0 0;}
+
+  /* ---------- Today: ring + steps ---------- */
+  .ring-row{display:flex; align-items:center; gap:18px;}
+  .ring-wrap{position:relative; width:104px; height:104px; flex-shrink:0;}
+  .ring-wrap svg{transform:rotate(-90deg);}
+  .ring-label{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+  .ring-label .num{font-size:19px; font-weight:800;}
+  .ring-label .unit{font-size:11px; color:var(--text-dim);}
+  .steps-actions{display:flex; gap:8px; margin-top:14px;}
+  .btn{
+    border:none; cursor:pointer; font-family:inherit;
+    border-radius:var(--radius-sm); font-weight:700; font-size:13px;
+    padding:10px 14px; transition:transform .12s ease, opacity .12s ease, box-shadow .12s ease;
+  }
+  .btn:active{transform:scale(0.96);}
+  .btn-ember{
+    background:linear-gradient(135deg, var(--teal), var(--teal-2)); color:#12210a;
+    box-shadow:0 8px 20px -8px rgba(198,249,75,0.6);
+  }
+  .btn-purple{
+    background:linear-gradient(135deg, var(--purple), var(--purple-2)); color:#100a2e;
+    box-shadow:0 8px 20px -8px rgba(124,92,255,0.55);
+  }
+  .btn-ghost{background:var(--card-2); color:var(--text); border:1px solid var(--border);}
+  .btn-teal{
+    background:linear-gradient(135deg, var(--teal), var(--teal-2)); color:#12210a;
+    box-shadow:0 8px 20px -8px rgba(198,249,75,0.5);
+  }
+  .btn-block{width:100%;}
+
+  /* ---------- Timetable ---------- */
+  .tt-item{
+    display:flex; align-items:center; gap:12px;
+    padding:13px 14px; margin-bottom:10px;
+    border:1.5px solid var(--border); border-radius:14px;
+    background:var(--card-2);
+  }
+  .tt-time{width:56px; font-size:12px; color:var(--text-dim); font-weight:700; flex-shrink:0;}
+  .tt-title{flex:1; font-size:14.5px; font-weight:600;}
+  .tt-title.done{color:var(--text-faint); text-decoration:line-through;}
+  .check{
+    width:22px; height:22px; border-radius:50%; border:2px solid var(--border);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer;
+    font-size:12px; color:transparent;
+  }
+  .check.on{background:var(--teal); border-color:var(--teal); color:#12210a;}
+  .icon-btn{
+    width:26px; height:26px; border-radius:50%; border:none; background:transparent;
+    color:var(--text-faint); font-size:16px; cursor:pointer; flex-shrink:0;
+  }
+  .add-row{display:flex; gap:8px; margin-top:12px;}
+  .add-row input[type=time]{
+    background:var(--card-2); border:1px solid var(--border); color:var(--text);
+    border-radius:var(--radius-sm); padding:9px 8px; font-size:13px; width:98px; font-family:inherit;
+  }
+  .add-row input[type=text]{
+    background:var(--card-2); border:1px solid var(--border); color:var(--text);
+    border-radius:var(--radius-sm); padding:9px 12px; font-size:13px; flex:1; font-family:inherit;
+  }
+  .add-row input::placeholder{color:var(--text-faint);}
+
+  /* ---------- Chips / tabs ---------- */
+  .chip-row{display:flex; gap:8px; overflow-x:auto; margin-bottom:16px; padding-bottom:2px;}
+  .chip{
+    flex-shrink:0; padding:8px 15px; border-radius:100px; font-size:13px; font-weight:700;
+    background:var(--card); border:1px solid var(--border); color:var(--text-dim); cursor:pointer;
+  }
+  .chip.active{background:var(--text); color:#0a0a0c; border-color:var(--text);}
+
+  /* ---------- Exercise cards ---------- */
+  .ex-card{
+    display:flex; align-items:center; gap:10px;
+    background:var(--card); border:1px solid var(--border-soft); border-radius:var(--radius-md);
+    padding:13px; margin-bottom:10px; transition:opacity .15s ease;
+  }
+  .ex-card.ex-inactive{opacity:0.5;}
+  .plan-star{font-size:17px; color:var(--text-faint); cursor:pointer; flex-shrink:0; width:20px; text-align:center;}
+  .plan-star.on{color:var(--teal);}
+  .ex-thumb{
+    width:44px; height:44px; border-radius:12px; flex-shrink:0;
+    background:var(--card-2); display:flex; align-items:center; justify-content:center; font-size:19px;
+  }
+  .ex-name{font-size:14.5px; font-weight:700; margin:0;}
+  .ex-meta{font-size:12px; color:var(--text-dim); margin:2px 0 0 0;}
+  .ex-check{margin-left:auto; flex-shrink:0;}
+  .plan-progress-card{
+    background:linear-gradient(135deg, var(--purple-dim), #191530);
+    border:1px solid #362a6b;
+  }
+  .plan-progress-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
+  .plan-progress-pct{font-size:22px; font-weight:800; color:var(--purple-2);}
+
+  /* ---------- Challenges ---------- */
+  .chal-card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius-md); padding:15px; margin-bottom:12px;}
+  .chal-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:9px;}
+  .chal-name{font-weight:700; font-size:14.5px;}
+  .chal-days{font-size:12px; color:var(--text-dim);}
+  .bar-track{height:8px; border-radius:100px; background:var(--card-2); overflow:hidden;}
+  .bar-fill{height:100%; border-radius:100px; background:linear-gradient(90deg, var(--teal), var(--teal-2));}
+  .chal-foot{display:flex; justify-content:space-between; margin-top:8px; font-size:12px; color:var(--text-dim);}
+
+  /* ---------- Streak heatmap ---------- */
+  .streak-stats{display:flex; gap:10px; margin-bottom:16px;}
+  .stat-box{flex:1; background:var(--card); border:1px solid var(--border); border-radius:var(--radius-md); padding:14px; text-align:center;}
+  .stat-box .num{font-size:24px; font-weight:800; color:var(--ember);}
+  .stat-box .lbl{font-size:11.5px; color:var(--text-dim); margin-top:2px;}
+  .heat-grid{display:grid; grid-template-columns:repeat(7, 1fr); gap:6px;}
+  .heat-cell{aspect-ratio:1; border-radius:7px; background:var(--card-2);}
+  .heat-cell.l1{background:#3a2013;}
+  .heat-cell.l2{background:#7a3a1c;}
+  .heat-cell.l3{background:var(--ember);}
+  .heat-legend{display:flex; align-items:center; gap:6px; margin-top:10px; font-size:11px; color:var(--text-dim);}
+  .heat-legend .heat-cell{width:12px; height:12px; aspect-ratio:unset;}
+
+  /* ---------- Alarms ---------- */
+  .alarm-row{display:flex; align-items:center; gap:12px; padding:13px 4px; border-bottom:1px solid var(--border);}
+  .alarm-row:last-child{border-bottom:none;}
+  .alarm-time{font-size:22px; font-weight:800; width:88px;}
+  .alarm-info{flex:1;}
+  .alarm-label{font-size:13.5px; font-weight:600;}
+  .alarm-days{font-size:11.5px; color:var(--text-dim); margin-top:2px;}
+  .switch{width:42px; height:25px; border-radius:100px; background:var(--card-2); border:1px solid var(--border); position:relative; cursor:pointer; flex-shrink:0;}
+  .switch .knob{position:absolute; top:2px; left:2px; width:19px; height:19px; border-radius:50%; background:var(--text-dim); transition:all .18s ease;}
+  .switch.on{background:var(--ember-dim); border-color:var(--ember);}
+  .switch.on .knob{left:19px; background:var(--ember);}
+
+  /* ---------- Reminder list on Today ---------- */
+  .rem-row{
+    display:flex; align-items:center; gap:11px;
+    padding:12px 14px; margin-bottom:9px;
+    border:1.5px solid var(--border); border-radius:14px;
+    background:var(--card-2);
+  }
+  .rem-dot{width:8px; height:8px; border-radius:50%; background:var(--teal); flex-shrink:0;}
+  .rem-text{font-size:13.5px; flex:1;}
+  .rem-time{font-size:12px; color:var(--text-dim);}
+
+  /* ---------- Widget preview ---------- */
+  .widget-mock{
+    width:100%; aspect-ratio:2.1/1; border-radius:26px; padding:16px;
+    background:linear-gradient(145deg,#1c1c21,#131316);
+    border:1px solid var(--border);
+    display:flex; align-items:center; gap:16px;
+  }
+  .widget-ring{position:relative; width:66px; height:66px; flex-shrink:0;}
+  .widget-ring svg{transform:rotate(-90deg);}
+  .widget-col{flex:1;}
+  .widget-app{font-size:11px; color:var(--text-dim); font-weight:700; margin-bottom:4px;}
+  .widget-big{font-size:19px; font-weight:800;}
+  .widget-sub{font-size:12px; color:var(--text-dim); margin-top:2px;}
+
+  /* ---------- Modal ---------- */
+  .overlay{
+    position:absolute; inset:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(2px);
+    display:none; align-items:flex-end; z-index:50;
+  }
+  .overlay.show{display:flex;}
+  .sheet{
+    width:100%; background:var(--bg-elev); border-radius:24px 24px 0 0;
+    padding:22px 20px 26px 20px; border-top:1px solid var(--border);
+    animation:slideUp .25s ease;
+  }
+  @keyframes slideUp{from{transform:translateY(30px); opacity:0;} to{transform:translateY(0); opacity:1;}}
+  .sheet h3{margin:0 0 16px 0; font-size:17px; font-weight:800;}
+  .field-lbl{font-size:12px; color:var(--text-dim); margin:12px 0 6px 0; font-weight:700;}
+  .day-toggle-row{display:flex; gap:6px; flex-wrap:wrap;}
+  .day-toggle{
+    width:36px; height:36px; border-radius:50%; border:1px solid var(--border); background:var(--card);
+    color:var(--text-dim); font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .day-toggle.on{background:var(--ember); border-color:var(--ember); color:#1a0d06;}
+  .sheet-actions{display:flex; gap:10px; margin-top:20px;}
+  .tone-row{display:flex; flex-direction:column; gap:8px; margin-top:8px;}
+  .tone-opt{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 14px; border-radius:var(--radius-sm); border:1px solid var(--border);
+    background:var(--card-2); cursor:pointer;
+  }
+  .tone-opt.on{border-color:var(--ember); background:linear-gradient(135deg, var(--ember-dim), #1c1310);}
+  .tone-name{font-size:13.5px; font-weight:700;}
+  .tone-radio{width:18px; height:18px; border-radius:50%; border:2px solid var(--border); flex-shrink:0;}
+  .tone-opt.on .tone-radio{border-color:var(--ember); background:radial-gradient(var(--ember) 45%, transparent 50%);}
+  .upload-btn{
+    display:block; text-align:center; padding:12px; border-radius:var(--radius-sm);
+    border:1px dashed var(--border); color:var(--text-dim); font-size:13px; cursor:pointer;
+  }
+  .signal-dot{width:8px; height:8px; border-radius:50%; background:var(--text-faint); display:inline-block; margin-right:6px;}
+  .signal-dot.live{background:var(--teal); box-shadow:0 0 8px var(--teal);}
+  .settings-section{margin-bottom:20px;}
+  .settings-section:last-child{margin-bottom:0;}
+  .settings-section h4{font-size:12.5px; font-weight:800; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.04em; margin:0 0 10px 0;}
+
+  /* ---------- Bottom nav ---------- */
+  .navbar{
+    position:absolute; left:0; right:0; bottom:0;
+    display:flex; justify-content:space-around; align-items:center;
+    background:rgba(19,19,22,0.92); backdrop-filter:blur(14px);
+    border-top:1px solid var(--border);
+    padding:10px 6px calc(10px + env(safe-area-inset-bottom)) 6px;
+  }
+  .nav-btn{
+    background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:3px;
+    color:var(--text-faint); font-size:10.5px; font-weight:700; cursor:pointer; font-family:inherit;
+    padding:4px 8px; flex:1;
+  }
+  .nav-btn.active{color:var(--teal);}
+  .nav-btn svg{width:21px; height:21px;}
+
+  .empty{color:var(--text-faint); font-size:13px; text-align:center; padding:18px 0;}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="brand-strip">
+    <div class="brand-mark"><img src="icon.png" alt="Ni8" style="width:20px; height:20px; border-radius:5px;"><span>NI8</span></div>
+    <div class="gear-btn" onclick="openSettings()">⚙️</div>
+  </div>
+
+  <!-- ============ TODAY ============ -->
+  <div class="screen active" id="screen-today">
+    <div class="topbar">
+      <div>
+        <p class="eyebrow" id="today-date">Friday, Sep 12</p>
+        <h1>Today</h1>
+      </div>
+      <div class="streak-pill">🔥 <span id="streak-pill-num">0</span> day streak</div>
+    </div>
+
+    <div class="card" id="notif-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <p class="card-title" style="margin:0;">Notifications</p>
+          <p class="card-sub" id="notif-status">Turn on to get real alarm &amp; reminder alerts</p>
+        </div>
+        <button class="btn btn-ember" id="notif-btn" onclick="requestNotifications()">Turn on</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-title">Steps today</p>
+      <div class="ring-row">
+        <div class="ring-wrap">
+          <svg width="104" height="104" viewBox="0 0 104 104">
+            <circle cx="52" cy="52" r="45" stroke="#222836" stroke-width="10" fill="none"/>
+            <circle id="steps-ring" cx="52" cy="52" r="45" stroke="#c6f94b" stroke-width="10" fill="none"
+              stroke-linecap="round" stroke-dasharray="282.7" stroke-dashoffset="282.7"/>
+          </svg>
+          <div class="ring-label">
+            <span class="num" id="steps-num">0</span>
+            <span class="unit">steps</span>
+          </div>
+        </div>
+        <div style="flex:1;">
+          <p class="card-sub" style="margin-bottom:8px;">Goal: <span id="steps-goal">8,000</span> steps</p>
+          <button class="btn btn-teal btn-block" id="track-btn" onclick="toggleTracking()">Start tracking</button>
+          <p class="card-sub" id="track-status" style="margin-top:8px;"><span class="signal-dot" id="signal-dot"></span>Keep your phone with you — steps are counted automatically while you walk</p>
+          <div style="display:flex; gap:6px; margin-top:10px;">
+            <div class="chip sens-chip" data-level="low" onclick="setSensitivity('low')" style="padding:6px 12px; font-size:11.5px;">Low</div>
+            <div class="chip sens-chip active" data-level="medium" onclick="setSensitivity('medium')" style="padding:6px 12px; font-size:11.5px;">Medium</div>
+            <div class="chip sens-chip" data-level="high" onclick="setSensitivity('high')" style="padding:6px 12px; font-size:11.5px;">High</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="toggleManualEntry()">
+          <span class="card-sub" style="margin:0;">Manual entry (if you didn't have your phone on you)</span>
+          <span class="card-sub" id="manual-caret" style="margin:0;">▾</span>
+        </div>
+        <div class="steps-actions" id="manual-entry" style="display:none; margin-top:10px;">
+          <button class="btn btn-ghost" onclick="addStepsManual(500)">+500</button>
+          <button class="btn btn-ghost" onclick="addStepsManual(1500)">+1500</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <p class="card-title" style="margin:0;">Today's schedule</p>
+        <span class="card-sub" id="today-progress">0/0 done</span>
+      </div>
+      <div id="today-tt-list"></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <p class="card-title" style="margin:0;">Habit reminders</p>
+        <span class="card-sub" style="cursor:pointer; color:var(--ember-2); font-weight:700;" onclick="openHabitSheet()">+ Add</span>
+      </div>
+      <div id="reminder-list"></div>
+    </div>
+
+    <div class="card" onclick="openWidgetPreview()" style="cursor:pointer;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <p class="card-title" style="margin:0;">Home screen widget</p>
+          <p class="card-sub">Preview — tap to see how it would look</p>
+        </div>
+        <span style="font-size:20px; color:var(--text-dim);">›</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TIMETABLE ============ -->
+  <div class="screen" id="screen-timetable">
+    <div class="topbar">
+      <div>
+        <p class="eyebrow">Plan your day</p>
+        <h1>Timetable</h1>
+      </div>
+    </div>
+    <div class="card">
+      <div id="tt-list"></div>
+      <div class="add-row">
+        <input type="time" id="tt-time-input" value="09:00">
+        <input type="text" id="tt-title-input" placeholder="Add a block, e.g. Deep work">
+      </div>
+      <button class="btn btn-ember btn-block" style="margin-top:10px;" onclick="addTimetableItem()">Add to timetable</button>
+    </div>
+  </div>
+
+  <!-- ============ MOVE (exercises + challenges) ============ -->
+  <div class="screen" id="screen-move">
+    <div class="topbar">
+      <div>
+        <p class="eyebrow">Home workouts</p>
+        <h1>Move</h1>
+      </div>
+    </div>
+
+    <div class="card plan-progress-card">
+      <div class="plan-progress-head">
+        <div>
+          <p class="card-title" style="margin:0;">Your plan</p>
+          <p class="card-sub" id="plan-progress-text">0/0 done</p>
+        </div>
+        <div class="plan-progress-pct" id="plan-progress-pct">0%</div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" id="plan-progress-bar" style="width:0%"></div></div>
+      <p class="card-sub" style="margin-top:10px;">Tap ★ on any exercise to add or remove it from your plan — your percentage is based only on what you choose to do.</p>
+    </div>
+
+    <div class="chip-row" id="ex-chip-row"></div>
+    <div id="ex-list"></div>
+
+    <div style="margin-top:6px; margin-bottom:10px; font-size:15px; font-weight:800;">Challenges</div>
+    <div id="chal-list"></div>
+  </div>
+
+  <!-- ============ STREAKS ============ -->
+  <div class="screen" id="screen-streaks">
+    <div class="topbar">
+      <div>
+        <p class="eyebrow">Consistency</p>
+        <h1>Streaks</h1>
+      </div>
+    </div>
+    <div class="streak-stats">
+      <div class="stat-box"><div class="num" id="stat-current">0</div><div class="lbl">Current streak</div></div>
+      <div class="stat-box"><div class="num" id="stat-best">0</div><div class="lbl">Best streak</div></div>
+      <div class="stat-box"><div class="num" id="stat-rate">0%</div><div class="lbl">Last 35 days</div></div>
+    </div>
+    <div class="card">
+      <p class="card-title">Last 35 days</p>
+      <div class="heat-grid" id="heat-grid"></div>
+      <div class="heat-legend">
+        <span>Less</span>
+        <div class="heat-cell"></div><div class="heat-cell l1"></div><div class="heat-cell l2"></div><div class="heat-cell l3"></div>
+        <span>More</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ALARMS ============ -->
+  <div class="screen" id="screen-alarms">
+    <div class="topbar">
+      <div>
+        <p class="eyebrow">Wake up, don't miss out</p>
+        <h1>Alarms</h1>
+      </div>
+    </div>
+    <div class="card">
+      <div id="alarm-list"></div>
+    </div>
+    <button class="btn btn-ember btn-block" onclick="openAlarmSheet()">+ Add alarm</button>
+    <button class="btn btn-ghost btn-block" style="margin-top:10px;" onclick="triggerAlarmRing({label:'Test alarm', time:new Date().toTimeString().slice(0,5)})">Test ring</button>
+  </div>
+
+  <!-- ============ Bottom Nav ============ -->
+  <div class="navbar">
+    <button class="nav-btn active" data-screen="today" onclick="goTo('today')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l8-8 8 8"/><path d="M6 10v10h12V10"/></svg>
+      Today
+    </button>
+    <button class="nav-btn" data-screen="timetable" onclick="goTo('timetable')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 3v3M16 3v3"/></svg>
+      Timetable
+    </button>
+    <button class="nav-btn" data-screen="move" onclick="goTo('move')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      Move
+    </button>
+    <button class="nav-btn" data-screen="streaks" onclick="goTo('streaks')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2c3 4-2 5-1 9 3-1 3-4 3-4 2 3 1 8-3 9-4-1-6-4-5-8 1-3 3-4 6-6z"/></svg>
+      Streaks
+    </button>
+    <button class="nav-btn" data-screen="alarms" onclick="goTo('alarms')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M5 3L2 6M19 3l3 3"/></svg>
+      Alarms
+    </button>
+  </div>
+
+  <!-- ============ Alarm ringing overlay ============ -->
+  <div class="overlay" id="ring-overlay" style="align-items:center;">
+    <div class="sheet" style="text-align:center; border-radius:24px; margin:0 20px;">
+      <div style="font-size:52px; margin-bottom:6px;">⏰</div>
+      <h3 id="ring-label" style="font-size:20px;">Alarm</h3>
+      <p class="card-sub" id="ring-time" style="font-size:15px; margin-top:-6px;"></p>
+      <div class="sheet-actions">
+        <button class="btn btn-ghost" style="flex:1;" onclick="snoozeAlarm()">Snooze 5 min</button>
+        <button class="btn btn-ember" style="flex:1;" onclick="dismissAlarm()">Dismiss</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Settings overlay ============ -->
+  <div class="overlay" id="settings-overlay">
+    <div class="sheet">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+        <h3 style="margin:0;">Settings</h3>
+        <div class="gear-btn" onclick="closeOverlay('settings-overlay')" style="font-size:18px;">✕</div>
+      </div>
+
+      <div class="settings-section">
+        <h4>Alarm ringtone</h4>
+        <div class="tone-row" id="tone-list"></div>
+        <label class="upload-btn" style="margin-top:8px;">
+          📁 Upload your own ringtone
+          <input type="file" accept="audio/*" style="display:none;" onchange="handleToneUpload(event)">
+        </label>
+        <p class="card-sub" id="tone-file-name" style="margin-top:6px;"></p>
+      </div>
+
+      <div class="settings-section">
+        <h4>Background alerts</h4>
+        <p class="card-sub" id="bg-alert-desc" style="margin-bottom:10px;">Get alarm and reminder alerts even when Ni8 is closed.</p>
+        <button class="btn btn-ember btn-block" id="bg-alert-btn" onclick="connectBackgroundAlerts()">Turn on</button>
+        <p class="card-sub" id="bg-alert-status" style="margin-top:8px;"></p>
+      </div>
+
+      <div class="settings-section">
+        <h4>Home screen widget</h4>
+        <p class="card-sub">The "Home screen widget" card on Today shows a preview of your stats. A live widget that updates on your phone's home screen (outside the app) needs separate native widget code beyond this app's current setup.</p>
+      </div>
+
+      <div class="sheet-actions">
+        <button class="btn btn-ember btn-block" onclick="closeOverlay('settings-overlay')">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Widget preview overlay ============ -->
+  <div class="overlay" id="widget-overlay">
+    <div class="sheet">
+      <h3>Home screen widget</h3>
+      <div class="widget-mock">
+        <div class="widget-ring">
+          <svg width="66" height="66" viewBox="0 0 66 66">
+            <circle cx="33" cy="33" r="27" stroke="#222836" stroke-width="7" fill="none"/>
+            <circle id="widget-ring-fill" cx="33" cy="33" r="27" stroke="#c6f94b" stroke-width="7" fill="none" stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="169.6"/>
+          </svg>
+        </div>
+        <div class="widget-col">
+          <div class="widget-app">🔥 <span id="widget-streak">0</span>-day streak</div>
+          <div class="widget-big" id="widget-steps">0 steps</div>
+          <div class="widget-sub" id="widget-next">No upcoming block</div>
+        </div>
+      </div>
+      <p class="card-sub" style="margin-top:14px;">This is how your progress looks on your phone's home screen — always visible, no need to open the app.</p>
+      <div class="sheet-actions">
+        <button class="btn btn-ghost btn-block" onclick="closeOverlay('widget-overlay')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Add alarm overlay ============ -->
+  <div class="overlay" id="alarm-overlay">
+    <div class="sheet">
+      <h3>New alarm</h3>
+      <div class="field-lbl">Time</div>
+      <input type="time" id="alarm-time-input" value="07:00" style="background:var(--card-2); border:1px solid var(--border); color:var(--text); border-radius:var(--radius-sm); padding:10px 12px; font-size:16px; width:100%; font-family:inherit;">
+      <div class="field-lbl">Label</div>
+      <input type="text" id="alarm-label-input" placeholder="e.g. Morning walk" style="background:var(--card-2); border:1px solid var(--border); color:var(--text); border-radius:var(--radius-sm); padding:10px 12px; font-size:14px; width:100%; font-family:inherit;">
+      <div class="field-lbl">Repeat on</div>
+      <div class="day-toggle-row" id="alarm-day-row"></div>
+      <div class="sheet-actions">
+        <button class="btn btn-ghost" style="flex:1;" onclick="closeOverlay('alarm-overlay')">Cancel</button>
+        <button class="btn btn-ember" style="flex:1;" onclick="saveAlarm()">Save alarm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Add habit reminder overlay ============ -->
+  <div class="overlay" id="habit-overlay">
+    <div class="sheet">
+      <h3 id="habit-sheet-title">New habit reminder</h3>
+      <div class="field-lbl">Reminder text</div>
+      <input type="text" id="habit-title-input" placeholder="e.g. Drink water" style="background:var(--card-2); border:1px solid var(--border); color:var(--text); border-radius:var(--radius-sm); padding:10px 12px; font-size:14px; width:100%; font-family:inherit;">
+      <div class="field-lbl">Time</div>
+      <input type="time" id="habit-time-input" value="09:00" style="background:var(--card-2); border:1px solid var(--border); color:var(--text); border-radius:var(--radius-sm); padding:10px 12px; font-size:16px; width:100%; font-family:inherit;">
+      <div class="field-lbl">Repeat on</div>
+      <div class="day-toggle-row" id="habit-day-row"></div>
+      <div class="sheet-actions">
+        <button class="btn btn-ghost" style="flex:1;" onclick="closeOverlay('habit-overlay')">Cancel</button>
+        <button class="btn btn-ember" style="flex:1;" onclick="saveHabit()">Save reminder</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ===================== STATE ===================== */
+let timetable = [
+  {id:1, time:'07:00', title:'Morning walk', done:true},
+  {id:2, time:'09:30', title:'Deep work block', done:true},
+  {id:3, time:'13:00', title:'Lunch + rest', done:false},
+  {id:4, time:'18:00', title:'Home workout', done:false},
+  {id:5, time:'22:00', title:'Wind down / no screens', done:false},
+];
+let ttIdCounter = 6;
+
+let exercises = [
+  {id:1, name:'Push-ups', meta:'3 sets × 15 reps', group:'Push', icon:'💪', done:true, inPlan:true},
+  {id:2, name:'Pike push-ups', meta:'3 sets × 10 reps', group:'Push', icon:'🤸', done:false, inPlan:true},
+  {id:3, name:'Bodyweight rows', meta:'3 sets × 12 reps', group:'Pull', icon:'🏋️', done:false, inPlan:true},
+  {id:4, name:'Superman hold', meta:'3 sets × 30 sec', group:'Pull', icon:'🦸', done:false, inPlan:false},
+  {id:5, name:'Bodyweight squats', meta:'4 sets × 20 reps', group:'Legs', icon:'🦵', done:true, inPlan:true},
+  {id:6, name:'Lunges', meta:'3 sets × 12/side', group:'Legs', icon:'🚶', done:false, inPlan:false},
+  {id:7, name:'Plank', meta:'3 sets × 45 sec', group:'Core', icon:'🧘', done:false, inPlan:true},
+  {id:8, name:'Bicycle crunches', meta:'3 sets × 20 reps', group:'Core', icon:'🔄', done:false, inPlan:false},
+];
+let exFilter = 'All';
+
+let challenges = [
+  {id:1, name:'10K steps × 5 days', progress:3, goal:5, unit:'days'},
+  {id:2, name:'No missed workouts this week', progress:2, goal:7, unit:'days'},
+  {id:3, name:'30-day push-up streak', progress:12, goal:30, unit:'days'},
+];
+
+let alarms = [
+  {id:1, time:'06:30', label:'Wake up', days:['M','T','W','T','F'], on:true},
+  {id:2, time:'18:00', label:'Home workout', days:['M','W','F'], on:true},
+  {id:3, time:'22:30', label:'Wind down', days:['S','M','T','W','T','F','S'], on:false},
+];
+let alarmDayDraft = [];
+
+/* ===================== REAL STEP TRACKING (device motion sensor) ===================== */
+const stepsGoal = 8000;
+function todayKey(){
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+let stepsHistory = {};
+try{ stepsHistory = JSON.parse(localStorage.getItem('ember-steps-history') || '{}'); }catch(e){ stepsHistory = {}; }
+let currentDayKey = todayKey();
+let steps = stepsHistory[currentDayKey] || 0; // always starts at 0 on a new day
+let isTracking = false;
+let motionBuffer = [];
+let lastStepTime = 0;
+let stepThreshold = 3.2; // medium, in m/s² above the rolling average
+function setSensitivity(level){
+  stepThreshold = level==='low' ? 4.4 : level==='high' ? 2.3 : 3.2;
+  document.querySelectorAll('.sens-chip').forEach(c=>c.classList.toggle('active', c.dataset.level===level));
+}
+
+function saveSteps(){
+  stepsHistory[currentDayKey] = steps;
+  try{ localStorage.setItem('ember-steps-history', JSON.stringify(stepsHistory)); }catch(e){}
+}
+function checkDayRollover(){
+  const k = todayKey();
+  if(k !== currentDayKey){
+    currentDayKey = k;
+    steps = stepsHistory[currentDayKey] || 0; // fresh day, back to 0
+    renderSteps();
+    renderStreaks(); // new day starts unscored until something is completed
+  }
+}
+function handleMotion(e){
+  lastMotionEventAt = Date.now();
+  if(!signalConfirmed){
+    signalConfirmed = true;
+    document.getElementById('signal-dot').classList.add('live');
+  }
+  const acc = e.accelerationIncludingGravity || e.acceleration;
+  if(!acc || acc.x===null) return;
+  const mag = Math.sqrt((acc.x||0)**2 + (acc.y||0)**2 + (acc.z||0)**2);
+  motionBuffer.push(mag);
+  if(motionBuffer.length > 40) motionBuffer.shift();
+  const avg = motionBuffer.reduce((a,b)=>a+b, 0) / motionBuffer.length;
+  const variance = motionBuffer.reduce((s,v)=>s+(v-avg)*(v-avg), 0) / motionBuffer.length;
+  const noiseFloor = Math.sqrt(variance); // ignores tiny jitters when the phone is sitting still
+  const now = Date.now();
+  // a step = a sharp jolt clearly above both the sensitivity threshold and current background noise,
+  // spaced at least 300ms apart (a person can't physically step faster than that)
+  if(mag - avg > stepThreshold && mag - avg > noiseFloor * 1.6 && now - lastStepTime > 280){
+    lastStepTime = now;
+    checkDayRollover();
+    steps += 1;
+    saveSteps();
+    renderSteps();
+    maybeBumpStreak();
+  }
+}
+let lastMotionEventAt = 0;
+let signalConfirmed = false;
+async function toggleTracking(){
+  const status = document.getElementById('track-status');
+  const dot = document.getElementById('signal-dot');
+
+  // Native app (built with Capacitor): read steps that Android's own Health
+  // Connect has already been counting all day, in the background, with or
+  // without Ni8 running. This is the path that actually survives the app
+  // being fully closed.
+  if(window.Capacitor && Capacitor.isNativePlatform() && Capacitor.Plugins && Capacitor.Plugins.Health){
+    return toggleNativeHealthSync();
+  }
+
+  // Web/PWA fallback: accelerometer-based counting, only while this tab/app is open.
+  if(isTracking){
+    window.removeEventListener('devicemotion', handleMotion);
+    isTracking = false;
+    updateTrackingUI();
+    return;
+  }
+  if(!window.isSecureContext){
+    status.innerHTML = '<span class="signal-dot"></span>⚠️ Motion sensors only work on a page opened over HTTPS (or localhost) — not a local file. Host the app online first.';
+    return;
+  }
+  if(!('DeviceMotionEvent' in window)){
+    status.innerHTML = '<span class="signal-dot"></span>This browser does not support motion sensors.';
+    return;
+  }
+  if(typeof DeviceMotionEvent.requestPermission === 'function'){
+    try{
+      const res = await DeviceMotionEvent.requestPermission();
+      if(res !== 'granted'){
+        status.innerHTML = '<span class="signal-dot"></span>Motion permission denied — allow it in your phone/browser settings and try again.';
+        return;
+      }
+    }catch(e){
+      status.innerHTML = '<span class="signal-dot"></span>Could not request motion permission on this device.';
+      return;
+    }
+  }
+  motionBuffer = [];
+  signalConfirmed = false;
+  lastMotionEventAt = 0;
+  window.addEventListener('devicemotion', handleMotion);
+  isTracking = true;
+  updateTrackingUI();
+  // watchdog: warn if no sensor data arrives after starting
+  setTimeout(()=>{
+    if(isTracking && !signalConfirmed){
+      document.getElementById('track-status').innerHTML = '<span class="signal-dot"></span>⚠️ No motion data received. Check that motion access is allowed for this site, and that it is opened over HTTPS, not a downloaded file.';
+    }
+  }, 4000);
+}
+
+/* ===================== NATIVE STEPS (Health Connect, via @capgo/capacitor-health) =====================
+   Only runs inside the native app built with Capacitor (see CONVERT_TO_NATIVE_APP.md).
+   Android's Health Connect counts steps continuously using the phone's hardware sensor,
+   independent of whether Ni8 is open — so once authorized, we just read the running
+   total. No custom background service needed, and it keeps counting even if Ni8 (or
+   the phone) is fully closed and reopened later. */
+let nativeHealthAuthorized = false;
+let nativeHealthPoll = null;
+
+async function toggleNativeHealthSync(){
+  const status = document.getElementById('track-status');
+  const btn = document.getElementById('track-btn');
+  if(nativeHealthAuthorized){
+    if(nativeHealthPoll) clearInterval(nativeHealthPoll);
+    nativeHealthAuthorized = false;
+    btn.textContent = 'Sync with Health Connect';
+    status.innerHTML = '<span class="signal-dot" id="signal-dot"></span>Paused — steps will stop updating in Ni8 (Health Connect keeps counting regardless).';
+    return;
+  }
+  const Health = Capacitor.Plugins.Health;
+  try{
+    status.innerHTML = '<span class="signal-dot" id="signal-dot"></span>Connecting to Health Connect…';
+    const avail = await Health.isAvailable();
+    if(!avail || !avail.available){
+      status.innerHTML = '<span class="signal-dot" id="signal-dot"></span>⚠️ Health Connect isn\'t available on this device. Install it from the Play Store, then try again.';
+      return;
+    }
+    await Health.requestAuthorization({ read: ['steps'] });
+    nativeHealthAuthorized = true;
+    document.getElementById('signal-dot').classList.add('live');
+    btn.textContent = 'Synced with Health Connect';
+    status.innerHTML = '<span class="signal-dot live" id="signal-dot"></span>🟢 Steps count all day via Health Connect — even while Ni8 is closed.';
+    await syncNativeStepsNow();
+    nativeHealthPoll = setInterval(syncNativeStepsNow, 30000);
+  }catch(e){
+    status.innerHTML = '<span class="signal-dot" id="signal-dot"></span>⚠️ Could not connect to Health Connect: '+e.message;
+  }
+}
+async function syncNativeStepsNow(){
+  try{
+    checkDayRollover();
+    const Health = Capacitor.Plugins.Health;
+    const start = new Date(); start.setHours(0,0,0,0);
+    const end = new Date();
+    const res = await Health.readSamples({ dataType:'steps', startDate:start.toISOString(), endDate:end.toISOString() });
+    const total = (res.samples || []).reduce((sum, s)=> sum + (s.value || 0), 0);
+    if(total > 0){
+      steps = Math.round(total);
+      saveSteps();
+      renderSteps();
+      maybeBumpStreak();
+    }
+  }catch(e){ console.warn('Health Connect sync failed', e); }
+}
+// If running natively, try to auto-restore the connection on launch (no need to tap again every time).
+if(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform() && Capacitor.Plugins && Capacitor.Plugins.Health){
+  toggleNativeHealthSync();
+}
+
+function updateTrackingUI(){
+  const btn = document.getElementById('track-btn');
+  const status = document.getElementById('track-status');
+  if(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform() && Capacitor.Plugins && Capacitor.Plugins.Health){
+    btn.textContent = nativeHealthAuthorized ? 'Synced with Health Connect' : 'Sync with Health Connect';
+    return;
+  }
+  if(isTracking){
+    btn.textContent = 'Stop tracking';
+    btn.classList.remove('btn-teal');
+    btn.classList.add('btn-ghost');
+    status.innerHTML = '<span class="signal-dot" id="signal-dot"></span>Tracking active — keep your phone in your pocket or hand while walking';
+  } else {
+    btn.textContent = 'Start tracking';
+    btn.classList.remove('btn-ghost');
+    btn.classList.add('btn-teal');
+    status.innerHTML = '<span class="signal-dot" id="signal-dot"></span>Keep your phone with you — steps are counted automatically while you walk';
+  }
+}
+function toggleManualEntry(){
+  const box = document.getElementById('manual-entry');
+  const caret = document.getElementById('manual-caret');
+  const open = box.style.display !== 'none';
+  box.style.display = open ? 'none' : 'flex';
+  caret.textContent = open ? '▾' : '▴';
+}
+function addStepsManual(n){
+  checkDayRollover();
+  steps += n;
+  saveSteps();
+  renderSteps();
+  maybeBumpStreak();
+}
+
+/* streak history: real per-day record, persisted by date (not random demo data) */
+let heatHistory = {};
+try{ heatHistory = JSON.parse(localStorage.getItem('ember-heat-history') || '{}'); }catch(e){ heatHistory = {}; }
+function saveHeatHistory(){
+  try{ localStorage.setItem('ember-heat-history', JSON.stringify(heatHistory)); }catch(e){}
+}
+function dateKeyDaysAgo(n){
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function getHeatArray(){
+  const arr = [];
+  for(let i=34; i>=0; i--) arr.push(heatHistory[dateKeyDaysAgo(i)] || 0);
+  return arr;
+}
+
+/* ===================== NAV ===================== */
+function goTo(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active', b.dataset.screen===name));
+}
+
+/* ===================== DATE ===================== */
+(function setDate(){
+  const d = new Date();
+  const opts = {weekday:'long', month:'short', day:'numeric'};
+  document.getElementById('today-date').textContent = d.toLocaleDateString('en-US', opts);
+})();
+
+/* ===================== TIMETABLE ===================== */
+function accentColorForTitle(title){
+  const t = title.toLowerCase();
+  if(/sleep|wind down|rest|night|bed/.test(t)) return 'var(--blue)';
+  if(/run|walk|workout|gym|exercise|cardio|strength|training/.test(t)) return 'var(--teal)';
+  return 'var(--purple)';
+}
+function renderTimetable(){
+  const list = document.getElementById('tt-list');
+  const todayList = document.getElementById('today-tt-list');
+  timetable.sort((a,b)=> a.time.localeCompare(b.time));
+  if(timetable.length===0){
+    list.innerHTML = '<div class="empty">No blocks yet — add your first one below.</div>';
+    todayList.innerHTML = '<div class="empty">Nothing scheduled today.</div>';
+  } else {
+    list.innerHTML = timetable.map(item=>`
+      <div class="tt-item" style="border-color:${accentColorForTitle(item.title)};">
+        <span class="tt-time">${fmtTime(item.time)}</span>
+        <span class="tt-title ${item.done?'done':''}">${item.title}</span>
+        <button class="icon-btn" onclick="deleteTimetableItem(${item.id})">✕</button>
+      </div>`).join('');
+    todayList.innerHTML = timetable.map(item=>`
+      <div class="tt-item" style="border-color:${accentColorForTitle(item.title)};">
+        <div class="check ${item.done?'on':''}" onclick="toggleTimetable(${item.id})">${item.done?'✓':''}</div>
+        <span class="tt-time">${fmtTime(item.time)}</span>
+        <span class="tt-title ${item.done?'done':''}">${item.title}</span>
+      </div>`).join('');
+  }
+  const doneCount = timetable.filter(t=>t.done).length;
+  document.getElementById('today-progress').textContent = `${doneCount}/${timetable.length} done`;
+  updateWidget();
+}
+function fmtTime(t){
+  const [h,m] = t.split(':').map(Number);
+  const ampm = h>=12?'PM':'AM';
+  const h12 = ((h+11)%12)+1;
+  return `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
+}
+function addTimetableItem(){
+  const time = document.getElementById('tt-time-input').value || '09:00';
+  const title = document.getElementById('tt-title-input').value.trim();
+  if(!title) return;
+  timetable.push({id:ttIdCounter++, time, title, done:false});
+  document.getElementById('tt-title-input').value = '';
+  renderTimetable();
+}
+function deleteTimetableItem(id){
+  timetable = timetable.filter(t=>t.id!==id);
+  renderTimetable();
+}
+function toggleTimetable(id){
+  const item = timetable.find(t=>t.id===id);
+  if(item) item.done = !item.done;
+  renderTimetable();
+  maybeBumpStreak();
+}
+
+/* ===================== HABIT REMINDERS (fully customizable) ===================== */
+let habits = [
+  {id:1, title:'Drink a glass of water', time:'10:00', days:['S','M','T','W','T','F','S'], enabled:true},
+  {id:2, title:'Stretch break', time:'15:30', days:['M','T','W','T','F'], enabled:true},
+];
+let habitDayDraft = [];
+let editingHabitId = null;
+
+function renderReminders(){
+  const box = document.getElementById('reminder-list');
+  if(habits.length===0){
+    box.innerHTML = '<div class="empty">No habit reminders yet — tap "+ Add" to create one.</div>';
+    return;
+  }
+  box.innerHTML = habits.map(h=>`
+    <div class="rem-row" style="border-color:var(--purple);">
+      <div class="check ${h.enabled?'on':''}" style="width:20px;height:20px;" onclick="toggleHabit(${h.id})">${h.enabled?'✓':''}</div>
+      <div class="rem-text" onclick="openHabitSheet(${h.id})" style="cursor:pointer;">
+        ${h.title}
+        <div class="card-sub" style="margin-top:2px;">${h.days.length===7?'Every day':h.days.join(' · ')}</div>
+      </div>
+      <div class="rem-time">${fmtTime(h.time)}</div>
+      <button class="icon-btn" onclick="deleteHabit(${h.id})">✕</button>
+    </div>`).join('');
+}
+function toggleHabit(id){
+  const h = habits.find(h=>h.id===id);
+  if(h) h.enabled = !h.enabled;
+  renderReminders();
+  syncNotificationsEverywhere();
+}
+function deleteHabit(id){
+  habits = habits.filter(h=>h.id!==id);
+  renderReminders();
+  syncNotificationsEverywhere();
+}
+function openHabitSheet(id){
+  editingHabitId = id || null;
+  const h = id ? habits.find(h=>h.id===id) : null;
+  document.getElementById('habit-sheet-title').textContent = h ? 'Edit habit reminder' : 'New habit reminder';
+  document.getElementById('habit-title-input').value = h ? h.title : '';
+  document.getElementById('habit-time-input').value = h ? h.time : '09:00';
+  habitDayDraft = h ? h.days.map(d=>allDays.indexOf(d)) : [];
+  document.getElementById('habit-day-row').innerHTML = allDays.map((d,i)=>`
+    <div class="day-toggle ${habitDayDraft.includes(i)?'on':''}" data-i="${i}" onclick="toggleHabitDraftDay(${i}, this)">${d}</div>
+  `).join('');
+  document.getElementById('habit-overlay').classList.add('show');
+}
+function toggleHabitDraftDay(i, el){
+  const idx = habitDayDraft.indexOf(i);
+  if(idx>-1){ habitDayDraft.splice(idx,1); el.classList.remove('on'); }
+  else { habitDayDraft.push(i); el.classList.add('on'); }
+}
+function saveHabit(){
+  const title = document.getElementById('habit-title-input').value.trim();
+  if(!title) return;
+  const time = document.getElementById('habit-time-input').value || '09:00';
+  const days = habitDayDraft.length ? habitDayDraft.sort((a,b)=>a-b).map(i=>allDays[i]) : allDays.slice();
+  if(editingHabitId){
+    const h = habits.find(h=>h.id===editingHabitId);
+    if(h){ h.title = title; h.time = time; h.days = days; }
+  } else {
+    habits.push({id:Date.now(), title, time, days, enabled:true});
+  }
+  renderReminders();
+  closeOverlay('habit-overlay');
+  syncNotificationsEverywhere();
+}
+
+/* ===================== STEPS ===================== */
+function renderSteps(){
+  document.getElementById('steps-num').textContent = steps.toLocaleString();
+  document.getElementById('steps-goal').textContent = stepsGoal.toLocaleString();
+  const pct = Math.min(steps/stepsGoal, 1);
+  const circumference = 282.7;
+  document.getElementById('steps-ring').style.strokeDashoffset = circumference * (1-pct);
+  updateWidget();
+  writeWidgetData();
+}
+
+/* Pushes the latest steps/streak numbers into native storage so the real
+   Android home-screen widget (added separately) can read and show them. */
+function writeWidgetData(){
+  if(!(isNative() && window.Capacitor.Plugins && Capacitor.Plugins.Preferences)) return;
+  try{
+    Capacitor.Plugins.Preferences.set({ key:'ni8_steps', value: String(steps) });
+    const {current} = computeStreakStats();
+    Capacitor.Plugins.Preferences.set({ key:'ni8_streak', value: String(current) });
+  }catch(e){}
+}
+
+/* ===================== EXERCISES ===================== */
+function renderExChips(){
+  const groups = ['All','Push','Pull','Legs','Core'];
+  document.getElementById('ex-chip-row').innerHTML = groups.map(g=>`
+    <div class="chip ${exFilter===g?'active':''}" onclick="setExFilter('${g}')">${g}</div>
+  `).join('');
+}
+function setExFilter(g){ exFilter=g; renderExercises(); renderExChips(); }
+function renderExercises(){
+  const filtered = exFilter==='All' ? exercises : exercises.filter(e=>e.group===exFilter);
+  document.getElementById('ex-list').innerHTML = filtered.map(e=>`
+    <div class="ex-card ${e.inPlan?'':'ex-inactive'}">
+      <div class="plan-star ${e.inPlan?'on':''}" onclick="togglePlan(${e.id})" title="${e.inPlan?'Remove from my plan':'Add to my plan'}">${e.inPlan?'★':'☆'}</div>
+      <div class="ex-thumb">${e.icon}</div>
+      <div style="flex:1; min-width:0;">
+        <p class="ex-name">${e.name}</p>
+        <p class="ex-meta">${e.meta} · ${e.group}</p>
+      </div>
+      ${e.inPlan
+        ? `<div class="check ex-check ${e.done?'on':''}" onclick="toggleExercise(${e.id})">${e.done?'✓':''}</div>`
+        : `<span class="card-sub" style="flex-shrink:0;">Not in plan</span>`
+      }
+    </div>
+  `).join('');
+  renderPlanProgress();
+}
+function togglePlan(id){
+  const e = exercises.find(e=>e.id===id);
+  if(e){
+    e.inPlan = !e.inPlan;
+    if(!e.inPlan) e.done = false;
+  }
+  renderExercises();
+  maybeBumpStreak();
+}
+function renderPlanProgress(){
+  const planned = exercises.filter(e=>e.inPlan);
+  const done = planned.filter(e=>e.done).length;
+  const pct = planned.length ? Math.round((done/planned.length)*100) : 0;
+  document.getElementById('plan-progress-text').textContent = `${done}/${planned.length} done`;
+  document.getElementById('plan-progress-pct').textContent = pct+'%';
+  document.getElementById('plan-progress-bar').style.width = pct+'%';
+}
+function toggleExercise(id){
+  const e = exercises.find(e=>e.id===id);
+  if(e && e.inPlan) e.done = !e.done;
+  renderExercises();
+  maybeBumpStreak();
+}
+
+/* ===================== CHALLENGES ===================== */
+function renderChallenges(){
+  document.getElementById('chal-list').innerHTML = challenges.map(c=>{
+    const pct = Math.min(100, Math.round((c.progress/c.goal)*100));
+    return `
+    <div class="chal-card">
+      <div class="chal-head">
+        <span class="chal-name">${c.name}</span>
+        <span class="chal-days">${c.progress}/${c.goal} ${c.unit}</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+      <div class="chal-foot"><span>${pct}% complete</span></div>
+    </div>`;
+  }).join('');
+}
+
+/* ===================== STREAKS ===================== */
+function computeStreakStats(){
+  const heat = getHeatArray();
+  let current=0;
+  for(let i=heat.length-1;i>=0;i--){
+    if(heat[i]>0) current++; else break;
+  }
+  let best=0, run=0;
+  heat.forEach(v=>{ if(v>0){run++; best=Math.max(best,run);} else run=0; });
+  const rate = Math.round((heat.filter(v=>v>0).length/heat.length)*100);
+  return {current, best, rate};
+}
+function renderStreaks(){
+  const {current, best, rate} = computeStreakStats();
+  document.getElementById('stat-current').textContent = current;
+  document.getElementById('stat-best').textContent = best;
+  document.getElementById('stat-rate').textContent = rate+'%';
+  document.getElementById('streak-pill-num').textContent = current;
+  document.getElementById('heat-grid').innerHTML = getHeatArray().map(v=>{
+    const cls = v===0?'':v===1?'l1':v===2?'l2':'l3';
+    return `<div class="heat-cell ${cls}"></div>`;
+  }).join('');
+  updateWidget();
+  writeWidgetData();
+}
+function maybeBumpStreak(){
+  // recompute today's real completion score from actual data (timetable, plan exercises, step goal)
+  // and persist it by today's date — no randomness, no re-seeding.
+  checkDayRollover();
+  const doneTT = timetable.filter(t=>t.done).length;
+  const plannedEx = exercises.filter(e=>e.inPlan);
+  const doneEx = plannedEx.filter(e=>e.done).length;
+  const stepsOk = steps>=stepsGoal ? 1 : 0;
+  const score = doneTT + doneEx + stepsOk;
+  const level = score>=6 ? 3 : score>=3 ? 2 : score>=1 ? 1 : 0;
+  heatHistory[todayKey()] = level;
+  saveHeatHistory();
+  renderStreaks();
+}
+
+/* ===================== ALARMS ===================== */
+const allDays = ['S','M','T','W','T','F','S'];
+function renderAlarms(){
+  document.getElementById('alarm-list').innerHTML = alarms.map(a=>`
+    <div class="alarm-row">
+      <div class="alarm-time">${fmtTime(a.time)}</div>
+      <div class="alarm-info">
+        <div class="alarm-label">${a.label}</div>
+        <div class="alarm-days">${a.days.length===7?'Every day':a.days.join(' · ')}</div>
+      </div>
+      <div class="switch ${a.on?'on':''}" onclick="toggleAlarm(${a.id})"><div class="knob"></div></div>
+    </div>
+  `).join('');
+}
+function toggleAlarm(id){
+  const a = alarms.find(a=>a.id===id);
+  if(a) a.on = !a.on;
+  renderAlarms();
+  syncNotificationsEverywhere();
+}
+function openAlarmSheet(){
+  alarmDayDraft = [];
+  document.getElementById('alarm-label-input').value='';
+  document.getElementById('alarm-time-input').value='07:00';
+  document.getElementById('alarm-day-row').innerHTML = allDays.map((d,i)=>`
+    <div class="day-toggle" data-i="${i}" onclick="toggleDraftDay(${i}, this)">${d}</div>
+  `).join('');
+  document.getElementById('alarm-overlay').classList.add('show');
+}
+function toggleDraftDay(i, el){
+  const idx = alarmDayDraft.indexOf(i);
+  if(idx>-1){ alarmDayDraft.splice(idx,1); el.classList.remove('on'); }
+  else { alarmDayDraft.push(i); el.classList.add('on'); }
+}
+function saveAlarm(){
+  const time = document.getElementById('alarm-time-input').value || '07:00';
+  const label = document.getElementById('alarm-label-input').value.trim() || 'Alarm';
+  const days = alarmDayDraft.length ? alarmDayDraft.sort((a,b)=>a-b).map(i=>allDays[i]) : ['Once'];
+  alarms.push({id:Date.now(), time, label, days, on:true});
+  renderAlarms();
+  closeOverlay('alarm-overlay');
+  syncNotificationsEverywhere();
+}
+
+/* ===================== WIDGET PREVIEW ===================== */
+function openWidgetPreview(){
+  updateWidget();
+  document.getElementById('widget-overlay').classList.add('show');
+}
+function updateWidget(){
+  const {current} = computeStreakStats();
+  document.getElementById('widget-streak').textContent = current;
+  document.getElementById('widget-steps').textContent = steps.toLocaleString()+' steps';
+  const next = timetable.filter(t=>!t.done)[0];
+  document.getElementById('widget-next').textContent = next ? `Next: ${next.title} · ${fmtTime(next.time)}` : 'All blocks done today';
+  const pct = Math.min(steps/stepsGoal,1);
+  document.getElementById('widget-ring-fill').style.strokeDashoffset = 169.6*(1-pct);
+}
+
+/* ===================== OVERLAY HELPERS ===================== */
+function closeOverlay(id){
+  document.getElementById(id).classList.remove('show');
+}
+
+/* ===================== NOTIFICATIONS (real, using the Notification API) ===================== */
+function isNative(){
+  return !!(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform());
+}
+function updateNotifButton(){
+  const btn = document.getElementById('notif-btn');
+  const status = document.getElementById('notif-status');
+
+  if(isNative() && Capacitor.Plugins && Capacitor.Plugins.LocalNotifications){
+    btn.style.display = '';
+    if(nativeNotifGranted){
+      status.textContent = 'On — alarms and reminders will notify you, even when Ni8 is closed';
+      btn.textContent = 'Enabled';
+      btn.classList.remove('btn-ember');
+      btn.classList.add('btn-ghost');
+    } else {
+      status.textContent = 'Turn on to get real alarm & reminder alerts';
+      btn.textContent = 'Turn on';
+      btn.classList.remove('btn-ghost');
+      btn.classList.add('btn-ember');
+    }
+    return;
+  }
+
+  if(!('Notification' in window)){
+    status.textContent = 'This browser does not support notifications';
+    btn.style.display = 'none';
+    return;
+  }
+  if(Notification.permission === 'granted'){
+    status.textContent = 'On — alarms and reminders will notify you';
+    btn.textContent = 'Enabled';
+    btn.classList.remove('btn-ember');
+    btn.classList.add('btn-ghost');
+  } else if(Notification.permission === 'denied'){
+    status.textContent = 'Blocked in browser settings — enable manually to receive alerts';
+    btn.textContent = 'Blocked';
+    btn.classList.remove('btn-ember');
+    btn.classList.add('btn-ghost');
+  } else {
+    status.textContent = 'Turn on to get real alarm & reminder alerts';
+    btn.textContent = 'Turn on';
+  }
+}
+let nativeNotifGranted = false;
+async function requestNotifications(){
+  if(isNative() && Capacitor.Plugins && Capacitor.Plugins.LocalNotifications){
+    try{
+      const perm = await Capacitor.Plugins.LocalNotifications.requestPermissions();
+      nativeNotifGranted = perm.display === 'granted';
+      updateNotifButton();
+      if(nativeNotifGranted) await scheduleAllNative();
+    }catch(e){ console.warn('Native notification permission failed', e); }
+    return;
+  }
+  if(!('Notification' in window)){ return; }
+  if(Notification.permission === 'granted'){ return; }
+  Notification.requestPermission().then(p=>{
+    updateNotifButton();
+    if(p === 'granted'){
+      fireNotification('Ni8', 'Notifications are on. You will be alerted for alarms and habit reminders.');
+    }
+  });
+}
+function fireNotification(title, body){
+  if(isNative() && Capacitor.Plugins && Capacitor.Plugins.LocalNotifications){
+    if(!nativeNotifGranted) return;
+    Capacitor.Plugins.LocalNotifications.schedule({
+      notifications: [{ id: Math.floor(Math.random()*1000000)+500000, title, body, smallIcon:'ic_stat_ni8', channelId:'ni8-alerts', schedule:{ at: new Date(Date.now()+500) } }]
+    }).catch(e=>console.warn(e));
+    return;
+  }
+  if(!('Notification' in window) || Notification.permission !== 'granted') return;
+  if(navigator.serviceWorker && navigator.serviceWorker.controller){
+    navigator.serviceWorker.ready.then(reg=> reg.showNotification(title, {body, icon:'icon.png', badge:'icon.png'}));
+  } else {
+    try{ new Notification(title, {body, icon:'icon.png'}); }catch(e){ console.warn(e); }
+  }
+}
+
+/* ===================== NATIVE ALARM/HABIT SCHEDULING (Android's own notification system —
+   this is what actually survives Ni8 being fully closed, no server needed) ===================== */
+const ALL_DAY_LETTERS = ['S','M','T','W','T','F','S'];
+function nativeIdFor(kind, itemId, dayIdx){
+  const base = kind === 'alarm' ? 1 : 2;
+  const safeItem = Math.abs(Number(itemId) || 0) % 900000;
+  return base * 1000000 + safeItem * 10 + (dayIdx==null ? 9 : dayIdx);
+}
+let nativeSetupDone = false;
+async function ensureNativeNotifSetup(){
+  if(nativeSetupDone) return;
+  if(!(isNative() && Capacitor.Plugins && Capacitor.Plugins.LocalNotifications)) return;
+  const LN = Capacitor.Plugins.LocalNotifications;
+  try{
+    // HIGH importance channel — this is what makes alerts pop up on screen
+    // with sound, instead of silently sitting in the notification shade.
+    await LN.createChannel({
+      id: 'ni8-alerts',
+      name: 'Alarms & reminders',
+      description: 'Ni8 alarm and habit reminder alerts',
+      importance: 5,
+      visibility: 1,
+      vibration: true,
+      sound: undefined
+    });
+  }catch(e){ console.warn('createChannel failed', e); }
+  try{
+    await LN.registerActionTypes({
+      types: [{
+        id: 'NI8_ALARM',
+        actions: [
+          { id: 'snooze', title: 'Snooze 5 min' },
+          { id: 'dismiss', title: 'Dismiss', destructive: true }
+        ]
+      }]
+    });
+    LN.addListener('localNotificationActionPerformed', (event)=>{
+      const extra = (event.notification && event.notification.extra) || {};
+      if(event.actionId === 'snooze' && extra.title){
+        const when = new Date(Date.now() + 5*60000);
+        LN.schedule({ notifications: [{
+          id: Math.floor(Math.random()*1000000)+700000,
+          title: extra.title, body: 'Snoozed — '+ (extra.body||''),
+          smallIcon:'ic_stat_ni8', channelId:'ni8-alerts', actionTypeId:'NI8_ALARM',
+          extra: extra,
+          schedule:{ at: when }
+        }] }).catch(()=>{});
+      }
+    });
+  }catch(e){ console.warn('registerActionTypes failed', e); }
+  nativeSetupDone = true;
+}
+async function scheduleAllNative(){
+  if(!(isNative() && Capacitor.Plugins && Capacitor.Plugins.LocalNotifications)) return;
+  await ensureNativeNotifSetup();
+  const LN = Capacitor.Plugins.LocalNotifications;
+  try{
+    const pending = await LN.getPending();
+    const ids = (pending.notifications || []).map(n=>({id:n.id}));
+    if(ids.length) await LN.cancel({notifications: ids});
+
+    const toSchedule = [];
+    alarms.filter(a=>a.on).forEach(a=>{
+      const [hh, mm] = a.time.split(':').map(Number);
+      const extra = { title:'⏰ '+a.label, body:"It's "+a.time };
+      if(a.days.includes('Once')){
+        const when = new Date();
+        when.setHours(hh, mm, 0, 0);
+        if(when.getTime() <= Date.now()) when.setDate(when.getDate()+1);
+        toSchedule.push({ id: nativeIdFor('alarm', a.id, null), title:extra.title, body:extra.body, smallIcon:'ic_stat_ni8', channelId:'ni8-alerts', actionTypeId:'NI8_ALARM', extra, schedule:{ at: when } });
+      } else {
+        a.days.forEach(d=>{
+          const dayIdx = ALL_DAY_LETTERS.indexOf(d);
+          if(dayIdx < 0) return;
+          toSchedule.push({ id: nativeIdFor('alarm', a.id, dayIdx), title:extra.title, body:extra.body, smallIcon:'ic_stat_ni8', channelId:'ni8-alerts', actionTypeId:'NI8_ALARM', extra, schedule:{ on:{ weekday: dayIdx+1, hour: hh, minute: mm }, allowWhileIdle:true } });
+        });
+      }
+    });
+    habits.filter(h=>h.enabled).forEach(h=>{
+      const [hh, mm] = h.time.split(':').map(Number);
+      const extra = { title:'🔔 '+h.title, body:"It's "+h.time };
+      h.days.forEach(d=>{
+        const dayIdx = ALL_DAY_LETTERS.indexOf(d);
+        if(dayIdx < 0) return;
+        toSchedule.push({ id: nativeIdFor('habit', h.id, dayIdx), title:extra.title, body:extra.body, smallIcon:'ic_stat_ni8', channelId:'ni8-alerts', actionTypeId:'NI8_ALARM', extra, schedule:{ on:{ weekday: dayIdx+1, hour: hh, minute: mm }, allowWhileIdle:true } });
+      });
+    });
+    if(toSchedule.length) await LN.schedule({ notifications: toSchedule });
+  }catch(e){ console.warn('Native notification scheduling failed', e); }
+}
+async function syncNotificationsEverywhere(){
+  syncScheduleToServer();     // web push path (browser/PWA use)
+  await scheduleAllNative();  // native local-notifications path (installed app use)
+}
+// Restore native permission state and (re)schedule on launch
+if(isNative() && window.Capacitor.Plugins && Capacitor.Plugins.LocalNotifications){
+  Capacitor.Plugins.LocalNotifications.checkPermissions().then(p=>{
+    nativeNotifGranted = p.display === 'granted';
+    updateNotifButton();
+    if(nativeNotifGranted) scheduleAllNative();
+  }).catch(()=>{});
+}
+
+/* ===================== ALARM RINGING (real embedded audio files — reliable in native WebView) ===================== */
+let activeRingingAlarm = null;
+let alarmTone = 'classic';
+let customToneURL = null;
+let customToneName = '';
+let customAudioEl = null;
+let alarmAudioEl = null;
+
+const TONE_DATA = {
+  classic: {label:'Classic beep', src:'data:audio/wav;base64,UklGRuJeAABXQVZFZm10IBAAAAABAAEAIlYAAESsAAACABAAZGF0Yb5eAAAAADkAcwCsAOUAHwFYAZEBywEEAj0CdwKwAhf93fyk/Gv8Mfz4+777hftM+xL72fqg+mb60wUMBkYGfwa4BvIGKwdkB54H1wcQCEoIffdE9wr30faY9l72Jfbs9bL1efVA9Qb1zfRsC6YL3wsYDFIMiwzFDP4MNw1xDaoN4w3j8arxcfE38f7wxfCL8FLwGfDf76bvbe8z7wYRPxF5EbIR6xElEl4SlxLREgoTQxN9E0rsEezX657rZesr6/LquOp/6kbqDOrT6ZrpoBbZFhIXTBeFF74X+BcxGGoYpBjdGBYZsOZ35j7mBObL5ZLlWOUf5ebkrORz5DrkAOQ5HHIcrBzlHB4dWB2RHcsdBB49HncesB4X4d3gpOBr4DHg+N+/34XfTN8T39neoN5n3tMhDCJFIn8iuCLxIisjZCOdI9cjECRJJH3bRNsL29HamNpf2iXa7Nmy2XnZQNkG2c3YbCemJ98nGChSKIsoxCj+KDcpcCmqKeMp5NWq1XHVONX+1MXUjNRS1BnU4NOm023TNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLDTTNNM00zTTNNM00zTTNNM00zTTNNM00zTTzCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTNNM00zTTNNM00zTTNNM00zTTNNPMLMwszCzMLMwszCzMLMwszCzMLMwszCw00zTTNNM00zTTNNM00zTTNNM00zTTNNM008wszCzMLMwszCzMLMwszCzMLMwszCzMLMwsNNM00zTTbdOm0+DTGdRS1IzUxdT+1DjVjypWKhwq4ymqKXApNyn+KMQoiyhSKBgo3yda2JTYzdgG2UDZedmy2ezZJdpf2pja0dr1JLwkgyRJJBAk1yOdI2QjKyPxIrgifyJFIvTdLd5n3qDe2d4T30zfhd+/3/jfMeBr4FwfIx/pHrAedx49HgQeyx2RHVgdHh3lHKwcjuPH4wDkOuRz5Kzk5uQf5VjlkuXL5QTmwhmJGVAZFhndGKQYahgxGPgXvheFF0wXEhcn6WDpmunT6QzqRup/6rjq8uor62XrnuspFO8TthN9E0MTChPREpcSXhIlEusRshF5EcHu+u4z723vpu/f7xnwUvCL8MXw/vA38Y8OVg4dDuMNqg1xDTcN/gzFDIsMUgwYDN8LWvSU9M30BvVA9Xn1svXs9SX2XvaY9tH29gi8CIMISggQCNcHngdkBysH8ga4Bn8GRgb0+S36Zvqg+tn6EvtM+4X7vvv4+zH8a/xcAyMD6QKwAncCPQIEAssBkQFYAR8B5QCsAI3/x/8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=='},
+  chime:   {label:'Gentle chime', src:'data:audio/wav;base64,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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA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Of5R/ab8QPwe/D/8m/wl/dH9j/5Q/wYApQAjAXwBrAG1AZwBaAEiAdMAhgBDABEA9P/v/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA='},
+  urgent:  {label:'Urgent pulse', src:'data:audio/wav;base64,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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA='},
+};
+
+function stopAlarmSound(){
+  if(alarmAudioEl){ alarmAudioEl.pause(); try{ alarmAudioEl.currentTime = 0; }catch(e){} }
+  if(customAudioEl){ customAudioEl.pause(); try{ customAudioEl.currentTime = 0; }catch(e){} }
+}
+function playAlarmSound(){
+  stopAlarmSound();
+  if(alarmTone === 'custom' && customToneURL){
+    if(!customAudioEl){ customAudioEl = new Audio(customToneURL); customAudioEl.loop = true; }
+    try{ customAudioEl.currentTime = 0; }catch(e){}
+    customAudioEl.play().catch(()=>{ alarmTone = 'classic'; playAlarmSound(); });
+    return;
+  }
+  const cfg = TONE_DATA[alarmTone] || TONE_DATA.classic;
+  if(!alarmAudioEl || alarmAudioEl.dataset.tone !== alarmTone){
+    alarmAudioEl = new Audio(cfg.src);
+    alarmAudioEl.loop = true;
+    alarmAudioEl.dataset.tone = alarmTone;
+  }
+  try{ alarmAudioEl.currentTime = 0; }catch(e){}
+  alarmAudioEl.play().catch(()=>{ /* will retry once the user taps something, per unlock listener below */ });
+}
+function previewTone(name){
+  stopAlarmSound();
+  alarmTone = name;
+  try{ localStorage.setItem('ember-alarm-tone', name); }catch(e){}
+  renderToneList();
+  if(name === 'custom' && !customToneURL) return; // nothing to preview yet
+  playAlarmSound();
+  setTimeout(stopAlarmSound, 1800);
+}
+function handleToneUpload(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  customToneURL = URL.createObjectURL(file);
+  customToneName = file.name;
+  customAudioEl = null; // rebuild with new source
+  alarmTone = 'custom';
+  document.getElementById('tone-file-name').textContent = '🎵 '+customToneName;
+  renderToneList();
+}
+function renderToneList(){
+  const list = document.getElementById('tone-list');
+  if(!list) return;
+  const options = Object.entries(TONE_DATA).map(([key, cfg])=>({key, label:cfg.label}));
+  if(customToneURL) options.push({key:'custom', label:'Custom: '+customToneName});
+  list.innerHTML = options.map(o=>`
+    <div class="tone-opt ${alarmTone===o.key?'on':''}" onclick="previewTone('${o.key}')">
+      <span class="tone-name">${o.label}</span>
+      <span class="tone-radio"></span>
+    </div>
+  `).join('');
+}
+function openSettings(){
+  renderToneList();
+  updateBgAlertStatus();
+  document.getElementById('settings-overlay').classList.add('show');
+}
+
+/* ===================== BACKGROUND ALERTS (Web Push via your own server) =====================
+   How this works: the browser gives us a "push subscription" (an anonymous endpoint
+   only your server can send to). We send that subscription + the user's alarms/habits
+   to YOUR server (server.js, provided separately). Your server stores it and, every
+   minute, checks whose alarm/habit time has arrived and sends a push through the
+   browser vendor's push service — which wakes the service worker and shows a
+   notification even if Ni8 itself is closed.
+
+   These two values are DEVELOPER config, not something end users ever see or type.
+   Fill them in once after you deploy server.js (see server/README.md), then re-host
+   the app. Until they're filled in, the "Turn on" button just explains that setup
+   isn't finished yet — nothing broken shows to your users. */
+const BG_SERVER_URL = 'https://ember-alerts-server-production.up.railway.app';
+const BG_VAPID_PUBLIC_KEY = 'BLDAknZvnkGb5Tx_WdK54lXcMLjxepC0-SkC2_AuO8hmYVD5ZwgvU7MZ9t1evrq8ka7jXf1Hc8T4dqWNET10QW8';
+
+let bgSubscribed = false;
+try{ bgSubscribed = localStorage.getItem('ember-bg-subscribed') === '1'; }catch(e){}
+
+function urlBase64ToUint8Array(base64String){
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for(let i=0; i<rawData.length; i++) outputArray[i] = rawData.charCodeAt(i);
+  return outputArray;
+}
+function updateBgAlertStatus(){
+  const el = document.getElementById('bg-alert-status');
+  const btn = document.getElementById('bg-alert-btn');
+  if(!el || !btn) return;
+  if(!BG_SERVER_URL || !BG_VAPID_PUBLIC_KEY){
+    el.textContent = 'Coming soon.';
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+    return;
+  }
+  btn.disabled = false;
+  btn.style.opacity = '1';
+  if(bgSubscribed){
+    el.textContent = '🟢 On — you\'ll get alerts even when Ni8 is closed.';
+    btn.textContent = 'Turn off';
+  } else {
+    el.textContent = 'Get alarm and reminder alerts even when Ni8 is closed.';
+    btn.textContent = 'Turn on';
+  }
+}
+async function connectBackgroundAlerts(){
+  const status = document.getElementById('bg-alert-status');
+  if(!BG_SERVER_URL || !BG_VAPID_PUBLIC_KEY) return; // not configured by the developer yet
+
+  if(bgSubscribed){
+    // turn off
+    try{
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.getSubscription();
+      if(sub){
+        await fetch(BG_SERVER_URL + '/unsubscribe', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({subscription: sub})
+        }).catch(()=>{});
+        await sub.unsubscribe();
+      }
+    }catch(e){}
+    bgSubscribed = false;
+    try{ localStorage.setItem('ember-bg-subscribed', '0'); }catch(e){}
+    updateBgAlertStatus();
+    return;
+  }
+
+  if(!window.isSecureContext){
+    status.textContent = '⚠️ This page must be opened over HTTPS for this to work.';
+    return;
+  }
+  if(Notification.permission !== 'granted'){
+    const p = await Notification.requestPermission();
+    if(p !== 'granted'){ status.textContent = 'Notification permission is required.'; return; }
+  }
+  try{
+    status.textContent = 'Turning on…';
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(BG_VAPID_PUBLIC_KEY)
+    });
+    await fetch(BG_SERVER_URL + '/subscribe', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({subscription: sub})
+    });
+    bgSubscribed = true;
+    try{ localStorage.setItem('ember-bg-subscribed', '1'); }catch(e){}
+    await syncNotificationsEverywhere();
+    updateBgAlertStatus();
+  }catch(e){
+    status.textContent = '⚠️ Could not turn this on: '+e.message;
+  }
+}
+async function syncScheduleToServer(){
+  if(!bgSubscribed || !BG_SERVER_URL) return;
+  try{
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.getSubscription();
+    if(!sub) return;
+    await fetch(BG_SERVER_URL + '/schedule', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        subscription: sub,
+        alarms: alarms.filter(a=>a.on),
+        habits: habits.filter(h=>h.enabled)
+      })
+    });
+  }catch(e){ /* server may be offline — local alarms/habits still work while the app is open */ }
+}
+function triggerAlarmRing(alarm){
+  activeRingingAlarm = alarm;
+  document.getElementById('ring-label').textContent = alarm.label;
+  document.getElementById('ring-time').textContent = fmtTime(alarm.time);
+  document.getElementById('ring-overlay').classList.add('show');
+  playAlarmSound();
+  fireNotification('⏰ '+alarm.label, "It's "+fmtTime(alarm.time));
+}
+function dismissAlarm(){
+  stopAlarmSound();
+  document.getElementById('ring-overlay').classList.remove('show');
+  activeRingingAlarm = null;
+}
+function snoozeAlarm(){
+  stopAlarmSound();
+  document.getElementById('ring-overlay').classList.remove('show');
+  if(activeRingingAlarm){
+    const t = new Date(Date.now() + 5*60000);
+    const time = String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
+    alarms.push({id:Date.now(), time, label:activeRingingAlarm.label+' (snoozed)', days:['Once'], on:true});
+    renderAlarms();
+  }
+  activeRingingAlarm = null;
+}
+// unlock audio playback the moment the person first taps anywhere, since some
+// WebViews/browsers block sound until there's been a user gesture on the page
+document.addEventListener('click', function unlockAudio(){
+  try{
+    const a = new Audio(TONE_DATA.classic.src);
+    a.volume = 0;
+    a.play().then(()=>{ a.pause(); }).catch(()=>{});
+  }catch(e){}
+}, {once:true});
+
+/* Checks every 20s for alarms and timetable blocks that match the current minute, and fires a real notification. Runs only while this tab/installed app is open or running in the background per the OS/browser's rules — true "app fully closed" delivery needs a backend push service (see note below). */
+let alreadyFiredToday = {};
+setInterval(()=>{
+  checkDayRollover();
+  const now = new Date();
+  const cur = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  const dayLetters = ['S','M','T','W','T','F','S'];
+  const todayLetter = dayLetters[now.getDay()];
+
+  alarms.forEach(a=>{
+    const appliesToday = a.days.includes('Once') || a.days.includes(todayLetter);
+    const key = 'alarm-'+a.id+'-'+cur;
+    if(a.on && appliesToday && a.time===cur && !alreadyFiredToday[key]){
+      triggerAlarmRing(a);
+      alreadyFiredToday[key]=true;
+    }
+  });
+  timetable.forEach(t=>{
+    const key = 'block-'+t.id+'-'+cur;
+    if(!t.done && t.time===cur && !alreadyFiredToday[key]){
+      fireNotification('Reminder', t.title+' is starting now');
+      alreadyFiredToday[key]=true;
+    }
+  });
+  habits.forEach(h=>{
+    const appliesToday = h.days.includes(todayLetter);
+    const key = 'habit-'+h.id+'-'+cur;
+    if(h.enabled && appliesToday && h.time===cur && !alreadyFiredToday[key]){
+      fireNotification('🔔 '+h.title, "It's "+fmtTime(h.time));
+      alreadyFiredToday[key]=true;
+    }
+  });
+}, 20000);
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('service-worker.js').catch(()=>{ /* fine if this file isn't hosted yet */ });
+}
+updateNotifButton();
+
+/* ===================== INIT ===================== */
+try{
+  const savedTone = localStorage.getItem('ember-alarm-tone');
+  if(savedTone && TONE_DATA[savedTone]) alarmTone = savedTone;
+}catch(e){}
+renderTimetable();
+renderReminders();
+renderSteps();
+renderExChips();
+renderExercises();
+renderChallenges();
+renderStreaks();
+maybeBumpStreak();
+renderAlarms();
+updateWidget();
+</script>
+</body>
+</html>
